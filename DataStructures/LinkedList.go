@@ -49,12 +49,12 @@ func (list *LinkedList) addAtIndex(node Node, i int) error {
 	if i < 0 || i > list.length {
 		return errors.New("index out of bounds")
 	}
-	// i == 0; insert at beginning
+	// i == 0; insert at start
 	if i == 0 {
 		list.addToStart(node)
 		return nil
 	}
-	// i == list length - 1; insert at end
+	// i == list length; insert at end
 	if i == list.length {
 		list.addToEnd(node)
 		return nil
@@ -114,8 +114,34 @@ func (list *LinkedList) deleteFromStart() {
 
 // Deletes a node from any valid index within the list. An index of 0 deletes from the beginning,
 // an index of the current list length deletes from the end.
-func (list LinkedList) deleteFromIndex() {
+func (list *LinkedList) deleteFromIndex(index int) error {
+	// out of bounds
+	if index < 0 || index > list.length {
+		return errors.New("index out of bound")
+	}
+	// i == 0; delete from start
+	if index == 0 {
+		list.deleteFromStart()
+		return nil
+	}
+	// i == list length; delete from end
+	if index == list.length {
+		list.deleteFromEnd()
+		return nil
+	}
 
+	currNode, prevNode := list.head, &Node{}
+
+	for index != 0 {
+		prevNode = currNode
+		currNode = currNode.next
+		index--
+	}
+
+	prevNode.next = currNode.next
+	list.length--
+
+	return nil
 }
 
 // Prints the contents of the linked list.
@@ -131,7 +157,7 @@ func (list *LinkedList) printNodes() {
 		currNode = currNode.next
 	}
 
-	fmt.Printf("%v \n", currNode.value)
+	fmt.Printf("%v - len %v \n", currNode.value, list.length)
 }
 
 func main() {
@@ -156,6 +182,18 @@ func main() {
 
 	list.printNodes()
 
+	err = list.addAtIndex(Node{value: 1}, 4)
+	if err != nil {
+		fmt.Printf("Error inserting node: %v\n", err)
+	}
+
+	list.printNodes()
+
+	err = list.addAtIndex(Node{value: 99}, 6)
+	if err != nil {
+		fmt.Printf("Error inserting node: %v\n", err)
+	}
+
 	list.deleteFromEnd()
 
 	list.printNodes()
@@ -164,11 +202,24 @@ func main() {
 
 	list.printNodes()
 
-	list.deleteFromEnd()
+	err = list.deleteFromIndex(1)
+	if err != nil {
+		fmt.Printf("Error deleting node: %v\n", err)
+	}
 
 	list.printNodes()
 
-	list.deleteFromEnd()
+	err = list.deleteFromIndex(1)
+	if err != nil {
+		fmt.Printf("Error deleting node: %v\n", err)
+	}
+
+	list.printNodes()
+
+	err = list.deleteFromIndex(0)
+	if err != nil {
+		fmt.Printf("Error deleting node: %v\n", err)
+	}
 
 	list.printNodes()
 }

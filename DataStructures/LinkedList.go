@@ -5,18 +5,18 @@ import (
 	"fmt"
 )
 
-type Node struct {
+type LLNode struct {
 	value int
-	next  *Node
+	next  *LLNode
 }
 
 type LinkedList struct {
-	head   *Node
+	head   *LLNode
 	length int
 }
 
 // Adds to the end of the linked list.
-func (list *LinkedList) addToEnd(node Node) {
+func (list *LinkedList) addToEnd(node LLNode) {
 	if list.length == 0 {
 		list.head = &node
 		list.length++
@@ -34,7 +34,7 @@ func (list *LinkedList) addToEnd(node Node) {
 }
 
 // Adds to the front of the linked list.
-func (list *LinkedList) addToStart(node Node) {
+func (list *LinkedList) addToStart(node LLNode) {
 	headCopy := list.head
 	node.next = headCopy
 
@@ -44,7 +44,7 @@ func (list *LinkedList) addToStart(node Node) {
 
 // Adds a node to any valid index within the list. An index of 0 inserts at the beginning,
 // an index of the current list length inserts at the end.
-func (list *LinkedList) addAtIndex(node Node, i int) error {
+func (list *LinkedList) addAtIndex(node LLNode, i int) error {
 	// out of bounds
 	if i < 0 || i > list.length {
 		return errors.New("index out of bounds")
@@ -60,7 +60,7 @@ func (list *LinkedList) addAtIndex(node Node, i int) error {
 		return nil
 	}
 
-	currNode, prevNode := list.head, &Node{}
+	currNode, prevNode := list.head, &LLNode{}
 
 	for i != 0 {
 		prevNode = currNode
@@ -86,7 +86,7 @@ func (list *LinkedList) deleteFromEnd() {
 		return
 	}
 
-	currNode, prevNode := list.head, &Node{}
+	currNode, prevNode := list.head, &LLNode{}
 
 	for currNode.next != nil {
 		prevNode = currNode
@@ -130,7 +130,7 @@ func (list *LinkedList) deleteFromIndex(index int) error {
 		return nil
 	}
 
-	currNode, prevNode := list.head, &Node{}
+	currNode, prevNode := list.head, &LLNode{}
 
 	for index != 0 {
 		prevNode = currNode
@@ -163,33 +163,33 @@ func (list *LinkedList) printNodes() {
 func main() {
 	list := LinkedList{}
 
-	list.addToEnd(Node{value: 20})
+	list.addToEnd(LLNode{value: 20})
 
 	list.printNodes()
 
-	list.addToStart(Node{value: 5})
+	list.addToStart(LLNode{value: 5})
 
 	list.printNodes()
 
-	list.addToEnd(Node{value: 29})
+	list.addToEnd(LLNode{value: 29})
 
 	list.printNodes()
 
-	err := list.addAtIndex(Node{value: 42}, 2)
+	err := list.addAtIndex(LLNode{value: 42}, 2)
 	if err != nil {
 		fmt.Printf("Error inserting node: %v\n", err)
 	}
 
 	list.printNodes()
 
-	err = list.addAtIndex(Node{value: 1}, 4)
+	err = list.addAtIndex(LLNode{value: 1}, 4)
 	if err != nil {
 		fmt.Printf("Error inserting node: %v\n", err)
 	}
 
 	list.printNodes()
 
-	err = list.addAtIndex(Node{value: 99}, 6)
+	err = list.addAtIndex(LLNode{value: 99}, 6)
 	if err != nil {
 		fmt.Printf("Error inserting node: %v\n", err)
 	}

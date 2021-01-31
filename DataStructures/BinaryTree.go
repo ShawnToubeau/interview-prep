@@ -17,6 +17,31 @@ type BinaryTree struct {
 	size int
 }
 
+// Breadth First Search traversal of the tree.
+func (tree *BinaryTree) BFS() {
+	var queue []BTNode
+
+	if tree.root != nil {
+		queue = append(queue, *tree.root)
+	}
+
+	for len(queue) > 0 {
+		// note: can't have these on same line for some reason?
+		node := queue[0]
+		queue = queue[1:]
+
+		fmt.Printf("%v\n", node)
+
+		if node.leftChild != nil {
+			queue = append(queue, *node.leftChild)
+		}
+
+		if node.rightChild != nil {
+			queue = append(queue, *node.rightChild)
+		}
+	}
+}
+
 // Traverses a binary tree in order.
 func (tree *BinaryTree) traverseInOrder(node *BTNode) {
 	if node != nil {
@@ -348,4 +373,6 @@ func main() {
 	//tree.traverseInPreOrder(tree.root)
 	//fmt.Println("Post order..")
 	//tree.traverseInPostOrder(tree.root)
+	//fmt.Println("BFS..")
+	//tree.BFS()
 }

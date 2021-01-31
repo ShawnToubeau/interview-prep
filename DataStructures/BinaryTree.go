@@ -278,6 +278,53 @@ func (tree *BinaryTree) isFull() bool {
 	return res
 }
 
+// Checks whether the tree is complete or not.
+// (Every level except the last is full & all nodes are as far left as possible)
+func (tree *BinaryTree) isComplete() bool {
+	var queue []BTNode
+	// set to true when we encounter a hole in the tree
+	flag := false
+
+	if tree.root != nil {
+		queue = append(queue, *tree.root)
+	} else {
+		return true
+	}
+
+	for len(queue) > 0 {
+		// note: can't have these on same line for some reason?
+		node := queue[0]
+		queue = queue[1:]
+
+		// check if the left child exists
+		if node.leftChild != nil {
+			// if we've encountered a hole before, return
+			if flag {
+				return false
+			}
+
+			queue = append(queue, *node.leftChild)
+		} else { // else, signify we found a hole
+			flag = false
+		}
+
+		// check if the right child exists
+		if node.rightChild != nil {
+			// if we've encountered a hole before, return
+			if flag {
+				return false
+			}
+
+			queue = append(queue, *node.rightChild)
+		} else { // else, signify we found a hole
+			flag = true
+		}
+	}
+
+	// if we make it here then we have a complete tree
+	return true
+}
+
 func (tree *BinaryTree) print() {
 	if tree.root == nil {
 		fmt.Println("Tree is empty")
@@ -392,6 +439,30 @@ func main() {
 
 	isFull = tree.isFull()
 	fmt.Printf("Is full: %v\n", isFull)
+
+	isComplete := tree.isComplete()
+	fmt.Printf("Is complete: %v\n", isComplete)
+
+	tree.insert(16)
+	tree.insert(10)
+
+	tree.print()
+
+	isComplete = tree.isComplete()
+	fmt.Printf("Is complete: %v\n", isComplete)
+
+	err = tree.delete(33)
+	if err != nil {
+		fmt.Printf("Error deleting value: %v\n", err)
+	}
+
+	tree.print()
+
+	isComplete = tree.isComplete()
+	fmt.Printf("Is complete: %v\n", isComplete)
+
+	//heights := tree.getHeights(tree.root)
+	//fmt.Printf("Heights: %v\n", heights)
 
 	//fmt.Println("In order..")
 	//tree.traverseInOrder(tree.root)

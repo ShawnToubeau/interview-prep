@@ -18,7 +18,7 @@ type BinaryTree struct {
 }
 
 // Breadth First Search traversal of the tree.
-func (tree *BinaryTree) BFS() {
+func (tree *BinaryTree) BFS(f func(node BTNode)) {
 	var queue []BTNode
 
 	if tree.root != nil {
@@ -30,7 +30,8 @@ func (tree *BinaryTree) BFS() {
 		node := queue[0]
 		queue = queue[1:]
 
-		fmt.Printf("%v\n", node)
+		// call our closure
+		f(node)
 
 		if node.leftChild != nil {
 			queue = append(queue, *node.leftChild)
@@ -262,7 +263,22 @@ func (tree *BinaryTree) handleNodeSwap(delNodeParent *BTNode, replacement *BTNod
 	}
 }
 
-func (tree *BinaryTree) printTree() {
+// Checks whether a tree is full or not. (Each node has 0 or 2 children)
+func (tree *BinaryTree) isFull() bool {
+	res := true
+
+	tree.BFS(func(node BTNode) {
+		// check if the current node has 0 or 2 children
+		if (node.leftChild != nil && node.rightChild == nil) ||
+			(node.leftChild == nil && node.rightChild != nil) {
+			res = false
+		}
+	})
+
+	return res
+}
+
+func (tree *BinaryTree) print() {
 	if tree.root == nil {
 		fmt.Println("Tree is empty")
 		return
@@ -318,7 +334,7 @@ func main() {
 	tree.insert(8)
 	tree.insert(27)
 	tree.insert(55)
-	tree.printTree()
+	tree.print()
 
 	contains := tree.contains(22)
 	fmt.Printf("Contains: %v\n", contains)
@@ -351,21 +367,31 @@ func main() {
 		fmt.Printf("Error deleting maximum value: %v\n", err)
 	}
 
-	tree.printTree()
+	tree.print()
 
 	err = tree.delete(40)
 	if err != nil {
 		fmt.Printf("Error deleting value: %v\n", err)
 	}
 
-	tree.printTree()
+	tree.print()
 
 	err = tree.delete(9)
 	if err != nil {
 		fmt.Printf("Error deleting value: %v\n", err)
 	}
 
-	tree.printTree()
+	tree.print()
+
+	isFull := tree.isFull()
+	fmt.Printf("Is full: %v\n", isFull)
+
+	tree.insert(33)
+
+	tree.print()
+
+	isFull = tree.isFull()
+	fmt.Printf("Is full: %v\n", isFull)
 
 	//fmt.Println("In order..")
 	//tree.traverseInOrder(tree.root)

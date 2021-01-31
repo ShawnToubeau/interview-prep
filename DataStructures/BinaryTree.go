@@ -65,7 +65,7 @@ func (tree *BinaryTree) insert(value int) {
 				}
 				// continue down
 				current = current.leftChild
-			} else if newNode.value > current.value { // else, insert on right
+			} else if newNode.value > current.value { // else, insert on right (change to >= to allow dupes)
 				// set right child if nil
 				if current.rightChild == nil {
 					current.rightChild = &newNode
@@ -129,6 +129,124 @@ func (tree *BinaryTree) getMax() (int, error) {
 	}
 
 	return current.value, nil
+
+}
+
+// Deletes the minimum value within the tree.
+func (tree *BinaryTree) deleteMin() error {
+	current := tree.root
+	prev := &BTNode{}
+	// if the tree is empty throw an error
+	if current == nil {
+		return errors.New("tree is empty")
+	}
+	// traverse to the left-most child
+	for current.leftChild != nil {
+		prev = current
+		current = current.leftChild
+	}
+
+	// set the left-most node to nil
+	prev.leftChild = nil
+
+	return nil
+}
+
+// Deletes the maximum value within the tree.
+func (tree *BinaryTree) deleteMax() error {
+	current := tree.root
+	prev := &BTNode{}
+	// if the tree is empty throw an error
+	if current == nil {
+		return errors.New("tree is empty")
+	}
+	// traverse to the right-most child
+	for current.rightChild != nil {
+		prev = current
+		current = current.rightChild
+	}
+
+	// set the right-most node to nil
+	prev.rightChild = nil
+
+	return nil
+}
+
+// Deletes a specific node from the tree.
+func (tree *BinaryTree) delete(value int) error {
+	// throw an error if the tree doesn't contain our element
+	if !tree.contains(value) {
+		return errors.New("value not found")
+	}
+
+	current := tree.root
+	prev := &BTNode{}
+	isRightChild := false
+
+	for current.value != value {
+		prev = current
+
+		if value < current.value {
+			current = current.leftChild
+			isRightChild = false
+		} else if value > current.value {
+			current = current.rightChild
+			isRightChild = true
+		}
+	}
+
+	// node is a leaf
+	if current.leftChild == nil && current.rightChild == nil {
+		if isRightChild {
+			prev.rightChild = nil
+		} else {
+			prev.leftChild = nil
+		}
+	} else if current.leftChild != nil && current.rightChild == nil { // node has left child
+		// if we're deleting the root
+		if *prev == (BTNode{}) {
+			tree.root = current.leftChild
+		} else if isRightChild {
+			prev.rightChild = current.leftChild
+		} else {
+			prev.leftChild = current.leftChild
+		}
+	} else if current.leftChild == nil && current.rightChild != nil { // node has right child
+		// if we're deleting the root
+		if *prev == (BTNode{}) {
+			tree.root = current.rightChild
+		} else if isRightChild {
+			prev.rightChild = current.rightChild
+		} else {
+			prev.leftChild = current.rightChild
+		}
+	} else if current.leftChild != nil && current.rightChild != nil { // node has left and right children
+		temp := current.rightChild
+		tempParent := &BTNode{}
+		// find the smallest element under the right child
+		for temp.leftChild != nil {
+			tempParent = temp
+			temp = temp.leftChild
+		}
+
+		// delete old connection to the node we're swapping
+		if tempParent != nil {
+			tempParent.leftChild = nil
+		}
+
+		temp.leftChild, temp.rightChild = current.leftChild, current.rightChild
+
+		// if we're deleting the root
+		if *prev == (BTNode{}) {
+			tree.root = temp
+		} else if isRightChild {
+			prev.rightChild = temp
+		} else {
+			prev.leftChild = temp
+		}
+	}
+
+	return nil
 }
 
 func (tree *BinaryTree) printTree() {
@@ -209,6 +327,32 @@ func main() {
 	} else {
 		fmt.Printf("Max: %v\n", max)
 	}
+
+	err = tree.deleteMin()
+	if err != nil {
+		fmt.Printf("Error deleting minimum value: %v\n", err)
+	}
+
+	err = tree.deleteMax()
+	if err != nil {
+		fmt.Printf("Error deleting maximum value: %v\n", err)
+	}
+
+	tree.printTree()
+
+	err = tree.delete(40)
+	if err != nil {
+		fmt.Printf("Error deleting value: %v\n", err)
+	}
+
+	tree.printTree()
+
+	err = tree.delete(20)
+	if err != nil {
+		fmt.Printf("Error deleting value: %v\n", err)
+	}
+
+	tree.printTree()
 
 	//fmt.Println("In order..")
 	//tree.traverseInOrder(tree.root)

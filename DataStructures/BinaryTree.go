@@ -278,6 +278,11 @@ func (tree *BinaryTree) isFull() bool {
 	return res
 }
 
+// Checks whether a tree is both full and complete.
+func (tree *BinaryTree) isPerfect() bool {
+	return tree.isFull() && tree.isComplete()
+}
+
 // Checks whether the tree is complete or not.
 // (Every level except the last is full & all nodes are as far left as possible)
 func (tree *BinaryTree) isComplete() bool {
@@ -461,8 +466,15 @@ func main() {
 	isComplete = tree.isComplete()
 	fmt.Printf("Is complete: %v\n", isComplete)
 
-	//heights := tree.getHeights(tree.root)
-	//fmt.Printf("Heights: %v\n", heights)
+	isPerfect := tree.isPerfect()
+	fmt.Printf("Is perfect: %v\n", isPerfect)
+
+	tree.insert(35)
+
+	tree.print()
+
+	isPerfect = tree.isPerfect()
+	fmt.Printf("Is perfect: %v\n", isPerfect)
 
 	//fmt.Println("In order..")
 	//tree.traverseInOrder(tree.root)

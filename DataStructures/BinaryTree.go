@@ -174,79 +174,67 @@ func (tree *BinaryTree) deleteMax() error {
 
 // Deletes a specific node from the tree.
 func (tree *BinaryTree) delete(value int) error {
-	// throw an error if the tree doesn't contain our element
-	if !tree.contains(value) {
-		return errors.New("value not found")
-	}
-
-	current := tree.root
-	prev := &BTNode{}
+	delNode := tree.root
+	delNodeParent := &BTNode{}
+	// whether the node we're deleting is a right child or not
 	isRightChild := false
 
-	for current.value != value {
-		prev = current
+	for delNode.value != value && delNode != nil {
+		delNodeParent = delNode
 
-		if value < current.value {
-			current = current.leftChild
+		if value < delNode.value {
+			delNode = delNode.leftChild
 			isRightChild = false
-		} else if value > current.value {
-			current = current.rightChild
+		} else if value > delNode.value {
+			delNode = delNode.rightChild
 			isRightChild = true
 		}
 	}
 
+	if delNode == nil {
+		return errors.New("value not found")
+	}
+
 	// node is a leaf
-	if current.leftChild == nil && current.rightChild == nil {
-		if isRightChild {
-			prev.rightChild = nil
-		} else {
-			prev.leftChild = nil
+	if delNode.leftChild == nil && delNode.rightChild == nil {
+		tree.handleNodeSwap(delNodeParent, nil, isRightChild)
+	} else if delNode.leftChild != nil && delNode.rightChild == nil { // node has left child
+		tree.handleNodeSwap(delNodeParent, delNode.leftChild, isRightChild)
+	} else if delNode.leftChild == nil && delNode.rightChild != nil { // node has right child
+		tree.handleNodeSwap(delNodeParent, delNode.rightChild, isRightChild)
+	} else if delNode.leftChild != nil && delNode.rightChild != nil { // node has left and right children
+		// node to swap with the deleted node
+		replacement := delNode.rightChild
+		// we'll need to know the replacement's parent to remove their link as well
+		replacementParent := &BTNode{}
+		// find the smallest element under the right child of the node we're deleting
+		for replacement.leftChild != nil {
+			replacementParent = replacement
+			replacement = replacement.leftChild
 		}
-	} else if current.leftChild != nil && current.rightChild == nil { // node has left child
-		// if we're deleting the root
-		if *prev == (BTNode{}) {
-			tree.root = current.leftChild
-		} else if isRightChild {
-			prev.rightChild = current.leftChild
-		} else {
-			prev.leftChild = current.leftChild
+		// delete old connection to the replacement node
+		if replacementParent != nil {
+			replacementParent.leftChild = nil
 		}
-	} else if current.leftChild == nil && current.rightChild != nil { // node has right child
-		// if we're deleting the root
-		if *prev == (BTNode{}) {
-			tree.root = current.rightChild
-		} else if isRightChild {
-			prev.rightChild = current.rightChild
-		} else {
-			prev.leftChild = current.rightChild
-		}
-	} else if current.leftChild != nil && current.rightChild != nil { // node has left and right children
-		temp := current.rightChild
-		tempParent := &BTNode{}
-		// find the smallest element under the right child
-		for temp.leftChild != nil {
-			tempParent = temp
-			temp = temp.leftChild
-		}
+		// set the children of the replacement to the children of our node to delete
+		replacement.leftChild, replacement.rightChild = delNode.leftChild, delNode.rightChild
 
-		// delete old connection to the node we're swapping
-		if tempParent != nil {
-			tempParent.leftChild = nil
-		}
-
-		temp.leftChild, temp.rightChild = current.leftChild, current.rightChild
-
-		// if we're deleting the root
-		if *prev == (BTNode{}) {
-			tree.root = temp
-		} else if isRightChild {
-			prev.rightChild = temp
-		} else {
-			prev.leftChild = temp
-		}
+		tree.handleNodeSwap(delNodeParent, replacement, isRightChild)
 	}
 
 	return nil
+}
+
+// Helper function for delete. Replaces the node we're deleting with the node that's taking it's place.
+func (tree *BinaryTree) handleNodeSwap(delNodeParent *BTNode, replacement *BTNode, isRightChild bool) {
+	// if the parent of our node to delete is null we are deleting the root
+	if *delNodeParent == (BTNode{}) {
+		tree.root = replacement
+	} else if isRightChild {
+		delNodeParent.rightChild = replacement
+	} else {
+		delNodeParent.leftChild = replacement
+	}
 }
 
 func (tree *BinaryTree) printTree() {
@@ -347,7 +335,7 @@ func main() {
 
 	tree.printTree()
 
-	err = tree.delete(20)
+	err = tree.delete(9)
 	if err != nil {
 		fmt.Printf("Error deleting value: %v\n", err)
 	}

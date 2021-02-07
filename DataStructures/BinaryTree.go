@@ -14,7 +14,6 @@ type BTNode struct {
 
 type BinaryTree struct {
 	root *BTNode
-	size int
 }
 
 // Breadth First Search traversal of the tree.
@@ -76,7 +75,6 @@ func (tree *BinaryTree) insert(value int) {
 	// set the root node if nil
 	if tree.root == nil {
 		tree.root = &newNode
-		tree.size++
 	} else { // else loop through children and insert
 		current := tree.root
 

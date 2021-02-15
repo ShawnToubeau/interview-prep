@@ -16,7 +16,9 @@ func MergeSort(arr []int, left, right int) {
 	}
 }
 
-// Merge combines two sub arrays into sorted order.
+// Merge combines two sub arrays into sorted order. Assumes arr[l..m] and arr[m+1..r] are sorted.
+// Best/Average/Worse runtimes: O(nlogn)
+// Space complexity: O(n)
 func merge(arr []int, left, middle, right int) {
 	// number of elements in the left and right sub arrays
 	numLeft, numRight := middle+1-left, right-middle

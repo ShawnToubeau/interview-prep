@@ -3,7 +3,7 @@ package main
 import "fmt"
 
 // Partition takes an array and sorts it to have it's partition element (arr[high]) at it's sorted index and all
-// less value elements to the left and all greater elements to the right
+// smaller elements to the left and all bigger elements to the right.
 func partition(arr []int, low int, high int) int {
 	// get right most element in the array
 	pivot := arr[high]
@@ -29,6 +29,9 @@ func partition(arr []int, low int, high int) int {
 }
 
 // Quicksort sorts elements in an array in ascending order.
+// Best/Average runtimes: O(nlogn)
+// Worst runtime: O(n^2)
+// Notes: Faster implementation compared to merge sort & heap sort.
 func Quicksort(arr []int, low int, high int) {
 	if low < high {
 		// sort the pivot element (arr[high]) to it's correct location

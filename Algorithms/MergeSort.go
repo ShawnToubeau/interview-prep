@@ -5,7 +5,7 @@ import "fmt"
 // MergeSort sorts elements in an array in ascending order.
 func MergeSort(arr []int, left, right int) {
 	if right > left {
-		// get the middle
+		// get the middle index
 		middle := (left + (right - 1)) / 2
 		// call merge sort with the left half
 		MergeSort(arr, left, middle)
@@ -62,9 +62,9 @@ func merge(arr []int, left, middle, right int) {
 }
 
 func main() {
-	test := []int{4, 3, 5, 1, 8, 5}
+	testArr := []int{4, 3, 5, 1, 8, 5}
 
-	MergeSort(test, 0, len(test)-1)
+	MergeSort(testArr, 0, len(testArr)-1)
 
-	fmt.Printf("%v", test)
+	fmt.Printf("%v", testArr)
 }

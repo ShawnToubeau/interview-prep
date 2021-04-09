@@ -125,6 +125,24 @@ func (tree *BinaryTree) contains(value int) bool {
 	return false
 }
 
+// Finds the maximum depth of the tree.
+func (tree *BinaryTree) getMaxDepth(root *BTNode) int {
+	if root == nil {
+		return 0
+	}
+
+	return max(tree.getMaxDepth(root.leftChild), tree.getMaxDepth(root.rightChild)) + 1
+}
+
+// Helper function for getMaxDepth. Used to determine the greater values between two binary tree nodes.
+func max(a int, b int) int {
+	if a > b {
+		return a
+	}
+
+	return b
+}
+
 // Retrieves the minimum value from the tree.
 func (tree *BinaryTree) getMin() (int, error) {
 	current := tree.root
@@ -385,6 +403,8 @@ func main() {
 	tree.insert(27)
 	tree.insert(55)
 	tree.print()
+
+	fmt.Printf("Max Depth %v\n", tree.getMaxDepth(tree.root))
 
 	contains := tree.contains(22)
 	fmt.Printf("Contains: %v\n", contains)

@@ -31,6 +31,7 @@ func partition(arr []int, low int, high int) int {
 // Quicksort sorts elements in an array in ascending order.
 // Best/Average runtimes: O(nlogn)
 // Worst runtime: O(n^2)
+// Uses: Sorting arrays.
 // Notes: Faster implementation compared to merge sort & heap sort.
 func Quicksort(arr []int, low int, high int) {
 	if low < high {
